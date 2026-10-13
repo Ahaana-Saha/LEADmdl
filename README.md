@@ -5,6 +5,7 @@ This repository contains the full computational pipeline: DFT electronic structu
 Nothing here has been synthesized. All results are computational predictions.
 **Key results**
 Quantity	Value
+
 Formula / MW	C₃₃H₁₇F₃FeN₅O, 612.37 Da
 Net charge	0
 Fe(III) ground state	low-spin doublet (sextet 0.1154 Ha higher)
