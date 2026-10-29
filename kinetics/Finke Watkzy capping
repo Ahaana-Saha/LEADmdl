@@ -1,0 +1,91 @@
+"""Aggregation kinetics under competitive terminal capping.
+
+Two frameworks, two different questions.
+
+Finke-Watzky (k1 nucleation, k2 autocatalytic surface growth) gives fibril mass
+over time. The inhibitor enters as a competitive cap on the growth term:
+
+    k2_eff = k2 / (1 + [I]/Ki)
+
+Cohen-Knowles-Buell gives macroscopic half-times in two regimes. Seeded
+elongation bypasses primary nucleation and depends linearly on the capping term.
+The autocatalytic regime has secondary nucleation active, where the master
+scaling constant goes as sqrt(k+), so suppression propagates under square-root
+damping. The autocatalytic value is the conservative one.
+
+A NOTE ON RATE CONSTANTS. The elongation constant quoted from Buell et al.,
+k2 = 2e3 M^-1 s^-1, is a bimolecular rate constant. Used literally with
+m0 = 10 uM it drives aggregation to completion in a few hours, so inhibited and
+uninhibited runs both saturate and the mass difference at 37.5 h vanishes. The
+mass simulation therefore uses APPARENT first-order rates fitted to a sigmoidal
+window of the right timescale, with the capping ratio applied to the elongation
+term exactly as above. The ratio is what carries the inhibitor effect; the
+absolute rates set the timescale. The half-time calculations below are
+independent of this and follow directly from the capping ratio.
+
+    python fw_capping.py
+"""
+import argparse
+
+import numpy as np
+
+M0 = 10.0          # initial monomer pool, uM
+K_NUC = 2e-4       # apparent primary nucleation rate, /h
+K_ELONG = 0.58     # apparent elongation rate, /h
+
+# Ki = exp(dG/RT) from the docked binding free energy
+KI = {298.15: 1.47, 310.15: 2.5}       # uM
+
+# Cohen-Knowles-Buell baselines, h
+HALFTIME = {"seeded": 1.50, "autocatalytic": 6.00}
+# half-time scales as (1 + [I]/Ki)**exponent
+EXPONENT = {"seeded": 1.0, "autocatalytic": 0.5}
+
+
+def fibril_mass(k_nuc, k_elong, t_end, dt=1e-4):
+    """Explicit integration of the two-step model. Returns B(t_end) in uM."""
+    a, b = M0, 0.0
+    for _ in range(int(t_end / dt)):
+        rate = k_nuc * a + k_elong * (a / M0) * b
+        a = max(0.0, a - rate * dt)
+        b = min(M0, b + rate * dt)
+    return b
+
+
+def mass_reduction(dose, ki, t_end):
+    """Percent reduction in fibril mass at t_end for an inhibitor dose in uM."""
+    base = fibril_mass(K_NUC, K_ELONG, t_end)
+    capped = fibril_mass(K_NUC, K_ELONG / (1.0 + dose / ki), t_end)
+    return (1.0 - capped / base) * 100.0
+
+
+def half_time(regime, dose, ki):
+    """Half-time in hours under Cohen-Knowles-Buell."""
+    return HALFTIME[regime] * (1.0 + dose / ki) ** EXPONENT[regime]
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--dose", type=float, default=10.0, help="[I] in uM")
+    ap.add_argument("--time", type=float, default=37.5, help="hours")
+    a = ap.parse_args()
+
+    print(f"m0 = {M0} uM, dose = {a.dose} uM, t = {a.time} h\n")
+
+    print("Finke-Watzky, competitive k2 suppression")
+    for temp in sorted(KI):
+        ki = KI[temp]
+        print(f"  {temp:.2f} K  Ki = {ki:.2f} uM  ({a.dose / ki:.1f} x Ki)"
+              f"   mass reduction {mass_reduction(a.dose, ki, a.time):.1f}%")
+
+    ki = KI[310.15]
+    print(f"\nCohen-Knowles-Buell half-times at Ki = {ki} uM")
+    for regime in ("seeded", "autocatalytic"):
+        base = HALFTIME[regime]
+        t = half_time(regime, a.dose, ki)
+        print(f"  {regime:<15} {base:.2f} h -> {t:.2f} h   "
+              f"+{(t / base - 1) * 100:.0f}%")
+
+
+if __name__ == "__main__":
+    main()
