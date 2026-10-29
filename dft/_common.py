@@ -1,4 +1,4 @@
-"""Shared setup for LEADmdl DFT runs.
+"""Shared setup for LEADmdl DFT runs. 
 
 All single-point UB3LYP, def2-SVP on Fe and 6-31G* elsewhere, density fitting.
 Open-shell iron needs convergence aids to reach an SCF solution at all, but a
