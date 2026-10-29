@@ -1,4 +1,4 @@
-"""Interfacial contact mapping between a docked ligand and a fibril receptor.
+"""Interfacial contact mapping between a docked ligand and a fibril receptor. 
 
 Reports every receptor residue with at least one atom within the cutoff of any
 ligand atom — contacting residues, not atom-atom contacts. The chain summary is
