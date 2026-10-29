@@ -1,4 +1,4 @@
-# LEADmdl
+# LEADmdl 
 
 A de novo neutral iron(III) porphyrin designed to bind the ⁶⁸GAVVT⁷² steric zipper at the
 α-synuclein fibril growth terminus.
