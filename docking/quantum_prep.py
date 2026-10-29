@@ -1,5 +1,5 @@
 """Metal-aware ligand preparation for AutoDock Vina.
-
+ 
 Automated PDBQT preparation discards the iron outright, leaving the pyrrole
 nitrogens unbonded and the axial hydroxide floating free. Docking under those
 conditions does not converge to a consistent site across independent runs, and
