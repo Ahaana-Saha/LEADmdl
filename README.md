@@ -39,12 +39,11 @@ scales with fibril number rather than total protein.
 structures/    input geometry
 dft/           PySCF / gpu4pyscf run scripts, one per spin and dielectric
 docking/       metal-aware ligand preparation
-analysis/      interfacial contact mapping
+analysis/      contact mapping, solvent accessibility, buried surface area
 kinetics/      Finke–Watzky capping model, Cohen–Knowles–Buell half-times
 ```
 
-Solvent accessibility and PLIP interaction typing were run with standard tools and are not
-scripted here.
+PLIP interaction typing and the PyMOL coordinate measurements were run with standard tools and are not scripted here.
 
 Solvent accessibility, PLIP interaction typing, and the PyMOL coordinate measurements were run with standard tools and are not scripted here.
 
