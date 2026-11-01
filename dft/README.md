@@ -1,8 +1,7 @@
 # DFT
 
 Single-point UB3LYP, def2-SVP on Fe and 6-31G* elsewhere, density fitting,
-IEF-PCM. Geometry is the MMFF94 pre-optimized structure — **not** relaxed at the
-DFT level.
+IEF-PCM. Geometry is the MMFF94 pre-optimized structure 
 
 Note that PySCF's `spin` is the number of unpaired electrons, not the
 multiplicity: `spin=1` is a doublet, `spin=4` a quintet.
